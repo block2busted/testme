@@ -12,7 +12,7 @@
                     {{ testme.title }}
                     {{ testme.description }}
                     <div>
-
+                        <a href="{{ url_for('testme_detail', testme_id=testme.id) }}">Details</a>
                     </div>
                 </div>
             </div>

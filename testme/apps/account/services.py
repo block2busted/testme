@@ -10,8 +10,7 @@ def save_photo(form_picture):
     photo_filename = random_hex + file_ext
     photo_path = os.path.join(app.root_path, 'static/profile_pics', photo_filename)
     output_size = (125, 125)
-    image = Image.open(form_picture)
-    image.thumbnail(output_size)
-    image.save(photo_path)
-
+    resized_photo = Image.open(form_picture)
+    resized_photo.thumbnail(output_size)
+    resized_photo.save(photo_path)
     return photo_filename

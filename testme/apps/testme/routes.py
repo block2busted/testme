@@ -12,6 +12,12 @@ def testme_list():
     return render_template('testme/testme_list.html', testme_list=testme_list)
 
 
+@app.route('/testme/<int:testme_id>')
+def testme_detail(testme_id):
+    testme = Testme.query.get_or_404(testme_id)
+    return render_template('testme/testme_detail.html', testme=testme)
+
+
 @app.route('/testme/new', methods=['POST', 'GET'])
 @login_required
 def new_test():

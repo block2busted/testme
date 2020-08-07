@@ -3,13 +3,31 @@
 {% block content %}
 
     <div>
-         Profile...
+        Profile...
     </div>
     <div class="row">
-            <div class="col-md-4">
-                <img class="rounded-circle" src="{{ image_file }}" alt="" width="150px">
+        <div class="col-md-4">
+            <img class="rounded-circle" src="{{ image_file }}" alt="" width="150px">
+        </div>
+        <div class="col-md-8">
+
+            <div>
+                {% if user_profile %}
+                    <div>
+                    ID: {{ user_profile.id }}|{{ current_user.id }}
+                        {{ user_profile.first_name }}, {{ user_profile.last_name }}
+                    </div>
+                    <div>
+                        {{ user_profile.birth_date }}
+                    </div>
+                    <div>
+                        {{ user_profile.about }}
+                    </div>
+                {% else %}
+                    Profile is not found
+                {% endif %}
             </div>
-        <div class="col-md-8">First Name, Last name, Birth Date</div>
+        </div>
     </div>
     <div class="row">
         <div class="col-md-4"></div>
@@ -18,7 +36,7 @@
 
     <div class="row pt-5">
         <div class="col-md-12">
-            <form method="post" enctype="multipart/form-data">
+            <form method="post" action="" enctype="multipart/form-data">
                 {{ profile_form.hidden_tag() }}
                 <fieldset class="form-group">
                     <div class="form-group">

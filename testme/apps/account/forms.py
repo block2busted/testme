@@ -1,8 +1,7 @@
 from flask_wtf import FlaskForm
-from flask_login import current_user
 from flask_wtf.file import FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, FileField
-from wtforms.validators import DataRequired,Length, Email, EqualTo, ValidationError
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, FileField, DateField
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Optional
 from .models import User
 
 
@@ -35,16 +34,9 @@ class LoginForm(FlaskForm):
 
 
 class ProfileUpdateForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()])
     photo = FileField('Update profile photo', validators=[FileAllowed(['jpg', 'png'])])
-    first_name = StringField('First name', validators=[DataRequired()])
-    last_name = StringField('Last name', validators=[DataRequired()])
-    birth_date = StringField('Date of birth', validators=[DataRequired()])
-    about = StringField('About', validators=[DataRequired()])
+    first_name = StringField('First name', validators=[Optional()])
+    last_name = StringField('Last name', validators=[Optional()])
+    birth_date = DateField('Date of birth', validators=[Optional()], format='%d.%m.%Y')
+    about = StringField('About', validators=[Optional()])
     submit = SubmitField('Update', validators=[DataRequired()])
-
-    def validate_email(self, email):
-        if email.data != current_user.email:
-            user = User.query.filter_by(email=email.data).first()
-            if user:
-                raise ValidationError('This email is busy. Please, try something different!')

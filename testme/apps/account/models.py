@@ -21,6 +21,11 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f'{self.username}'
 
+    def create_profile(self, *args, **kwargs):
+        profile = UserProfile(user_id=self.id, username=self.username)
+        db.session.add(profile)
+        db.session.commit()
+
 
 class UserProfile(db.Model):
 
@@ -30,7 +35,7 @@ class UserProfile(db.Model):
     photo = db.Column(db.String(64), nullable=True, default='default.jpg')
     first_name = db.Column(db.String(64), nullable=True)
     last_name = db.Column(db.String(64), nullable=True)
-    birth_date = db.Column(db.DateTime, nullable=True)
+    birth_date = db.Column(db.Date, nullable=True)
     about = db.Column(db.Text, nullable=True)
 
     def __repr__(self):

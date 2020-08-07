@@ -24,6 +24,8 @@ def signup():
             password=hashed_password
         )
         db.session.add(user)
+        db.session.commit()
+        user.create_profile()
         flash(f'Hello, {user.username}! Check your mail to activate an account!', 'success')
         return redirect(url_for('index'))
     return render_template('account/signup.html', signup_form=signup_form)
@@ -61,30 +63,30 @@ def logout():
 @login_required
 def profile():
     profile_form = ProfileUpdateForm()
-    image_file = url_for('static', filename=f'profile_pics/{current_user.photo}')
-
-    #user_profile = UserProfile.query.filter_by(user_id=current_user.id).first()
-
+    user_profile = UserProfile.query.filter_by(user_id=current_user.id).first()
+    image_file = url_for('static', filename=f'profile_pics/{user_profile.photo}')
     if request.method == 'POST':
         if profile_form.validate_on_submit():
+            user_profile.first_name = profile_form.first_name.data
+            user_profile.last_name = profile_form.last_name.data
+            user_profile.birth_date = profile_form.birth_date.data
+            user_profile.about = profile_form.about.data
             if profile_form.photo.data:
                 photo_file = save_photo(profile_form.photo.data)
-                # current_user.user_profile.photo = photo_file
-                current_user.photo = photo_file
-                db.session.commit()
-                return redirect(url_for('profile'))
+                user_profile.photo = photo_file
+            db.session.commit()
         return render_template(
-            'account/profile.html',
-            image_file=image_file,
-            profile_form=profile_form,
-            #user_profile=userprofile
-        )
+                'account/profile.html',
+                image_file=image_file,
+                profile_form=profile_form,
+                user_profile=user_profile
+            )
     else:
         return render_template(
             'account/profile.html',
             image_file=image_file,
             profile_form=profile_form,
-            #user_profile=userprofile
+            user_profile=user_profile
         )
 
 
