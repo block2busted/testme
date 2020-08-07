@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <form method="POST" action="">
+        {{ testme_form.hidden_tag() }}
+        <fieldset class="form-group">
+            <div class="form-group">
+                {{ testme_form.title.label(class='') }}
+                {% if testme_form.title.errors %}
+                    {{ testme_form.title(class='form-control form-control-md is-negative') }}
+                    {% for error in testme_form.title.errors %}
+                        <div class="invalid-feedback">
+                            <span>{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    {{ testme_form.title(class='form-control form-control-md') }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ testme_form.description.label(class='') }}
+                {% if testme_form.description.errors %}
+                    {{ testme_form.description(class='form-control form-control-md is-invalid') }}
+                    {% for error in testme_form.description.errors %}
+                        <div class="invalid-feedback">
+                            <span>{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    {{ testme_form.description(class='form-control form-control-md') }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ testme_form.submit(class='btn btn-outline-info') }}
+            </div>
+        </fieldset>
+    </form>
+
+{% endblock %}
