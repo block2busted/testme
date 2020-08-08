@@ -1,9 +1,12 @@
 from flask import render_template, flash, redirect, url_for, request, session, jsonify
-from testme import app, bcrypt, db, vk_oauth, github_oauth
+from testme import app, bcrypt, db, github_oauth
 from .models import User, UserProfile
 from .forms import SignupForm, LoginForm, ProfileUpdateForm
 from flask_login import login_user, logout_user, current_user, login_required
 from .services import save_photo
+
+
+from flask_dance.contrib.github import make_github_blueprint, github
 
 
 @app.route('/')
@@ -88,61 +91,3 @@ def profile():
             profile_form=profile_form,
             user_profile=user_profile
         )
-
-
-@app.route('/vk-oauth')
-def vk_oauth_login():
-    return vk_oauth.authorize(callback=url_for(
-        'vk_oauth_authorized',
-        next=request.args.get('next') or request.referrer or None)
-    )
-
-
-@app.route('/vk-oauth-authorized')
-@vk_oauth.authorized_handler
-def vk_oauth_authorized(resp):
-    next_url = request.args.get('next') or url_for('index')
-    if resp is None:
-        flash('You denied the request to sign in.')
-        return redirect(next_url)
-
-    session['vk_token'] = (
-        resp['oauth_token'],
-        resp['oauth_token_secret']
-    )
-    session['vk_user'] = resp['screen_name']
-
-    flash('You were signed in as %s' % resp['screen_name'])
-    return redirect(next_url)
-
-
-@app.route('/github-oauth')
-def github_oauth_login():
-    return github_oauth.authorize(callback=url_for(
-        'github_oauth_authorized',
-        _external=True)
-    )
-
-
-@app.route('/github-oauth-authorized')
-@github_oauth.authorized_handler
-def github_oauth_authorized(response):
-    print(response)
-    if response is None or response.get('access_token') is None:
-        return 'Access denied: reason=%s error=%s resp=%s' % (
-            request.args['error'],
-            request.args['error_description'],
-            response
-        )
-    session['github_token'] = (response['access_token'], '')
-    github_token = response['access_token']
-    me = github_oauth.get('user')
-    return jsonify(me.data)
-
-
-@github_oauth.tokengetter
-def get_github_oauth_token():
-    return session.get('github_token')
-
-
-

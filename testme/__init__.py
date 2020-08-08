@@ -7,26 +7,19 @@ from flask_oauth import OAuth
 
 
 app = Flask(__name__)
+
 app.config['SECRET_KEY'] = os.getenv('DJANGO_BLOG_SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sqlite.db'
+
 db = SQLAlchemy(app)
+
 bcrypt = Bcrypt(app)
+
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
 
 oauth = OAuth()
-
-vk_oauth = oauth.remote_app(
-    'vk',
-    consumer_key='7559999',
-    consumer_secret='KQxHuZMjGIsfzgNFqAiy',
-    request_token_params={'scope': 'email'},
-    base_url='https://api.vk.com/method/',
-    request_token_url=None,
-    access_token_url='https://oauth.vk.com/access_token',
-    authorize_url='https://oauth.vk.com/authorize'
-)
 
 github_oauth = oauth.remote_app(
     'github',
