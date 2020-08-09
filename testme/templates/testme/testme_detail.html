@@ -4,16 +4,30 @@
 
     <div class="">
         <div>
-            <h5>
+            <h6>
                 {{ testme.title }}
+            </h6>
+            Count of executions: {{ testme.execution_count }}
+        </div>
+        <div class="pt-2">
+            <h5>
+                {{ testme.question }}
             </h5>
         </div>
         <div>
-            {{ testme.description }}
+            <p>1) {{ testme.answer_1 }}</p>
+            <p>2) {{ testme.answer_2 }}</p>
+            <p>3) {{ testme.answer_3 }}</p>
+            <p>4) {{ testme.answer_4 }}</p>
         </div>
     </div>
     <div class="row">
-        {{ testme.about }}
+        <div class="col-md-4">
+            <h6 class="ml-5">
+                Right answer: №{{ testme.right_answer }}
+            </h6>
+            {{ testme.about }}
+        </div>
     </div>
     <button class="btn-primare btn-md">
         Start test!
@@ -43,29 +57,35 @@
                 Here no comments. Be the first!
             </p>
         {% endif %}
-        <div>
-            <form method="post" action="">
-                {{ comment_form.hidden_tag() }}
-                <fieldset class="form-group">
-                    <div class="form-group">
-                        {{ comment_form.content.label(class='') }}
-                        {% if comment_form.content.errors %}
-                            {{ comment_form.content(class='form-control form-control-md is-negative') }}
-                            {% for error in comment_form.content.errors %}
-                                <div class="invalid-feedback">
-                                    <span>{{ error }}</span>
-                                </div>
-                            {% endfor %}
-                        {% else %}
-                            {{ comment_form.content(class='form-control form-control-md') }}
-                        {% endif %}
-                    </div>
-                    <div class="form-group">
-                        {{ comment_form.submit(class='btn btn-outline-info') }}
-                    </div>
-                </fieldset>
-            </form>
-        </div>
+        {% if current_user.is_authenticated %}
+            <div>
+                <form method="post" action="">
+                    {{ comment_form.hidden_tag() }}
+                    <fieldset class="form-group">
+                        <div class="form-group">
+                            {% if comment_form.content.errors %}
+                                {{ comment_form.content(class='form-control form-control-md is-negative', placeholder='Content') }}
+                                {% for error in comment_form.content.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ comment_form.content(class='form-control form-control-md', placeholder='What do you want to say?') }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ comment_form.submit(class='btn btn-outline-info') }}
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        {% else %}
+            <div>
+                <a href="{{ url_for('login') }}">Login</a> to add a comments!
+            </div>
+        {% endif %}
+
     </div>
 
 

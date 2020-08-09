@@ -6,9 +6,6 @@ from flask_login import login_user, logout_user, current_user, login_required
 from .services import save_photo
 
 
-from flask_dance.contrib.github import make_github_blueprint, github
-
-
 @app.route('/')
 def index():
     return render_template('index.html')

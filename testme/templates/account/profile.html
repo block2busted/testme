@@ -14,7 +14,6 @@
             <div>
                 {% if user_profile %}
                     <div>
-                    ID: {{ user_profile.id }}|{{ current_user.id }}
                         {{ user_profile.first_name }}, {{ user_profile.last_name }}
                     </div>
                     <div>
@@ -51,47 +50,43 @@
                         {% endif %}
                     </div>
                     <div class="form-group">
-                        {{ profile_form.first_name.label(class='form-control-label') }}
                         {% if profile_form.first_name.errors %}
-                            {{ profile_form.first_name(class='form-control form-control-md is-invalid') }}
+                            {{ profile_form.first_name(class='form-control form-control-md is-invalid', placeholder='First Name') }}
                             {% for error in profile_form.first_name.errors %}
                                 <span>{{ error }}</span>
                             {% endfor %}
                         {% else %}
-                            {{ profile_form.first_name(class='form-control form-control-md') }}
+                            {{ profile_form.first_name(class='form-control form-control-md', placeholder='First name') }}
                         {% endif %}
                     </div>
                     <div class="form-group">
-                        {{ profile_form.last_name.label(class='form-control-label') }}
                         {% if profile_form.last_name.errors %}
-                            {{ profile_form.last_name(class='form-control form-control-md is-invalid') }}
+                            {{ profile_form.last_name(class='form-control form-control-md is-invalid', placeholder='Last name') }}
                             {% for error in profile_form.first_name.errors %}
                                 <span>{{ error }}</span>
                             {% endfor %}
                         {% else %}
-                            {{ profile_form.last_name(class='form-control form-control-md') }}
+                            {{ profile_form.last_name(class='form-control form-control-md', placeholder='Last name') }}
                         {% endif %}
                     </div>
                     <div class="form-group">
-                        {{ profile_form.birth_date.label(class='form-control-label') }}
                         {% if profile_form.birth_date.errors %}
-                            {{ profile_form.birth_date(class='form-control form-control-md is-invalid') }}
+                            {{ profile_form.birth_date(class='form-control form-control-md is-invalid', placeholder='Birth date') }}
                             {% for error in profile_form.first_name.errors %}
                                 <span>{{ error }}</span>
                             {% endfor %}
                         {% else %}
-                            {{ profile_form.birth_date(class='form-control form-control-md') }}
+                            {{ profile_form.birth_date(class='form-control form-control-md', placeholder='Birth date') }}
                         {% endif %}
                     </div>
                     <div class="form-group">
-                        {{ profile_form.about.label(class='form-control-label') }}
                         {% if profile_form.about.errors %}
-                            {{ profile_form.about(class='form-control form-control-md is-invalid') }}
+                            {{ profile_form.about(class='form-control form-control-md is-invalid', placeholder='Tell something about you...') }}
                             {% for error in profile_form.first_name.errors %}
                                 <span>{{ error }}</span>
                             {% endfor %}
                         {% else %}
-                            {{ profile_form.about(class='form-control form-control-md') }}
+                            {{ profile_form.about(class='form-control form-control-md', placeholder='Tell something about you') }}
                         {% endif %}
                     </div>
                 </fieldset>
