@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <form method="post" action="">
+        {{ testme_form.hidden_tag() }}
+        <fieldset class="form-group">
+            <div class="form-group">
+                {% if testme_form.title.errors %}
+                    {{ testme_form.title(class='form-control form-control-md is-invalid', placeholder='Title of testme...') }}
+                    {% for error in testme_form.title.errors %}
+                        <div class="invalid-feedback">
+                            <span>{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    {{ testme_form.title(class='form-control form-control-md', placeholder='Title of testme') }}
+                {% endif %}
+            </div>
+
+            {% for question_form in testme_form.question %}
+                <div class="row">
+                    <div class="col-md-9">
+                        <div class="form-group">
+                            {% if question_form.question.errors %}
+                                {{ question_form.question(class='form-control form-control-md is-invalid', placeholder='What is a question?') }}
+                                {% for error in question_form.question.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ question_form.question(class='form-control form-control-md', placeholder='What is a question?') }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        {{ question_form.right_answer.label(class='') }}
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            {% if question_form.right_answer.errors %}
+                                {{ question_form.right_answer(class='form-control form-control-md is-invalid', placeholder='Right answer') }}
+                                {% for error in question_form.right_answer.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ question_form.right_answer(class='form-control form-control-md', placeholder='Right answer') }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {% if question_form.answer_1.errors %}
+                                {{ question_form.answer_1(class='form-control form-control-md is-invalid', placeholder='First answer') }}
+                                {% for error in question_form.answer_1.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ question_form.answer_1(class='form-control form-control-md', placeholder='First answer') }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {% if question_form.answer_2.errors %}
+                                {{ question_form.answer_2(class='form-control form-control-md is-invalid', placeholder='Second answer') }}
+                                {% for error in question_form.answer_2.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ question_form.answer_2(class='form-control form-control-md', placeholder='Second answer') }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {% if question_form.answer_3.errors %}
+                                {{ question_form.answer_3(class='form-control form-control-md is-invalid', placeholder='Third answer') }}
+                                {% for error in question_form.answer_3.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ question_form.answer_3(class='form-control form-control-md', placeholder='Third answer') }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {% if question_form.answer_4.errors %}
+                                {{ question_form.answer_4(class='form-control form-control-md is-invalid', placeholder='Fourth answer') }}
+                                {% for error in question_form.answer_4.errors %}
+                                    <div class="invalid-feedback">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {{ question_form.answer_4(class='form-control form-control-md', placeholder='Fourth answer') }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+            {% endfor %}
+
+            <div class="form-group">
+                {{ testme_form.add_question(class='btn btn-primary') }}
+            </div>
+
+
+            <div class="pt-3">
+                {{ testme_form.submit(class='btn btn-outline-info') }}
+            </div>
+        </fieldset>
+    </form>
+
+{% endblock %}

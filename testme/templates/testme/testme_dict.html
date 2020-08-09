@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="pt-5">
+        {% if testme_dict %}
+            This is a test!
+
+        {% else %}
+            <h4>Dict not fount</h4>
+        {% endif %}
+    </div>
+{% endblock %}
