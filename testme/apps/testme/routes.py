@@ -1,14 +1,21 @@
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_required, current_user
-
+from sqlalchemy import desc
 from testme import app, db
-from .models import Comment, CustomTestme, TestmeAnswer, TestmeRightAnswer, TestmeQuestion
-from .forms import TestForm, CommentForm
+from .models import Comment, CustomTestme, TestmeAnswer
+from .forms import TestForm, CommentForm, StartTestmeForm
+from .services import get_testme_question, get_testme_answers, get_testme_right_answer, get_right_answer_content
 
 
 @app.route('/testme-list')
 def testme_list():
     testme_list = CustomTestme.query.all()
+    return render_template('testme/testme_list.html', testme_list=testme_list)
+
+
+@app.route('/testme-list-by-created')
+def testme_list_by_created():
+    testme_list = CustomTestme.query.order_by(desc(CustomTestme.date_created)).all()
     return render_template('testme/testme_list.html', testme_list=testme_list)
 
 
@@ -46,30 +53,34 @@ def testme_create():
         return render_template('testme/testme_create.html', testme_form=testme_form)
 
     if testme_form.validate_on_submit():
-        testme = CustomTestme(title=testme_form.title.data, author_id=1)
+        testme = CustomTestme(
+            title=testme_form.title.data,
+            description=testme_form.description.data,
+            author_id=current_user.id
+        )
         db.session.add(testme)
+        db.session.commit()
         for question_data in testme_form.question.data:
-            question = TestmeQuestion(
+            question = get_testme_question(
                 testme_id=testme.id,
                 title=question_data['question']
             )
-            db.session.add(question)
-
-            testme_answers = TestmeAnswer(
+            testme_answers = get_testme_answers(
                 answer_1=question_data['answer_1'],
                 answer_2=question_data['answer_2'],
                 answer_3=question_data['answer_3'],
                 answer_4=question_data['answer_4'],
+                testme_id=testme.id,
                 question_id=question.id
             )
-            db.session.add(testme_answers)
-
-            testme_right_answer = TestmeRightAnswer(
-                right_answer_number=question_data['right_answer'],
+            right_answer = get_right_answer_content(
+                question_data_right_answer=question_data['right_answer'],
+                question_data=question_data
+            )
+            testme_right_answer = get_testme_right_answer(
+                right_answer=right_answer,
                 question_id=question.id
             )
-            db.session.add(testme_right_answer)
-
             question.answers = testme_answers
             question.right_answer = testme_right_answer
             testme.questions.append(question)
@@ -77,3 +88,15 @@ def testme_create():
         return redirect(url_for('testme_detail', testme_id=testme.id))
 
     return render_template('testme/testme_create.html', testme_form=testme_form)
+
+
+@app.route('/testme/<int:testme_id>/start', methods=['POST', 'GET'])
+def testme_start(testme_id):
+    """Start testme"""
+    testme = CustomTestme.query.get_or_404(testme_id)
+    start_testme_form = StartTestmeForm()
+    answers = TestmeAnswer.query.filter_by()
+    #start_testme_form.answers.choices = [(answer.id, answer.answer) for question in testme.questions.answers]
+    return render_template('testme/testme_start.html', testme=testme)
+
+# [(g.id, g.name) for g in Group.query.order_by('name')]

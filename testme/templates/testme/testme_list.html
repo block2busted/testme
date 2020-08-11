@@ -1,22 +1,32 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div>
-        <a href="{{ url_for('testme_create') }}">Create my custom testme!</a>
+    <div class="row">
+        <div class="col-md-6">
+            <a href="{{ url_for('testme_create') }}">Create my custom testme!</a>
+        </div>
+        <div class="col-md-6">
+            <a href="{{ url_for('testme_list_by_created') }}">Sort by date created</a>
+        </div>
     </div>
+
+
     {% if testme_list %}
         <div class="row">
-        {% for testme in testme_list %}
-            <div class="col-md-3">
-                <div>
-                    {{ testme.title }}
-                    {{ testme.description }}
+            {% for testme in testme_list %}
+                <div class="col-md-3">
                     <div>
-                        <a href="{{ url_for('testme_detail', testme_id=testme.id) }}">Details</a>
+                        {{ testme.title }}
+                        <div>
+                            {{ testme.date_created }}
+                        </div>
+                        {{ testme.description }}
+                        <div>
+                            <a href="{{ url_for('testme_detail', testme_id=testme.id) }}">Details</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
         </div>
     {% else %}
         Nope...

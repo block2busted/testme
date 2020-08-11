@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div>
+        {{ testme.title }}
+    </div>
+    <div>
+        {{ testme.description }}
+    </div>
+    <div class="question-list pt-2">
+        {% for question in testme.questions %}
+            {{ question.title }}
+            <form name="{{ question.id }}" action="" method="post" onsubmit="">
+                <p>
+                    <input type="radio" name="options" id="answer_1"> {{ question.answers.answer_1 }} <br>
+                    <input type="radio" name="options" id="answer_2"> {{ question.answers.answer_2 }} <br>
+                    <input type="radio" name="options" id="answer_3"> {{ question.answers.answer_3 }} <br>
+                    <input type="radio" name="answers" id="answer_4"> {{ question.answers.answer_4 }} <br>
+                </p>
+            </form>
+
+        {% endfor %}
+        <button>Fili2p sosi)</button>
+    </div>
+
+{% endblock %}

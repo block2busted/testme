@@ -24,7 +24,8 @@ class QuestionForm(FlaskForm):
 
 class TestForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
-    question = FieldList(FormField(QuestionForm), min_entries=5)
+    question = FieldList(FormField(QuestionForm), min_entries=1)
+    description = TextAreaField('Description', validators=[DataRequired()])
     add_question = SubmitField('Add question')
     submit = SubmitField('Create testme')
 
@@ -32,3 +33,19 @@ class TestForm(FlaskForm):
 class CommentForm(FlaskForm):
     content = TextAreaField('Content', validators=[DataRequired()], render_kw={'placeholder': 'Content'})
     submit = SubmitField('Add comment')
+
+
+class StartTestmeQuestionForm(FlaskForm):
+    question = StringField('Question', validators=[DataRequired()])
+    answer_1 = StringField('Answer 1', validators=[DataRequired()])
+    answer_2 = StringField('Answer 2', validators=[DataRequired()])
+    answer_3 = StringField('Answer 3', validators=[DataRequired()])
+    answer_4 = StringField('Answer 4', validators=[DataRequired()])
+
+    class Meta:
+        csrf = None
+
+
+class StartTestmeForm(FlaskForm):
+    question = FieldList(FormField)
+    answers = SelectField('Answers')

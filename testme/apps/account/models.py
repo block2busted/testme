@@ -15,9 +15,10 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(64), unique=True, nullable=False)
     photo = db.Column(db.String(20), nullable=True, default='default.jpg')
     password = db.Column(db.String(60), nullable=False)
-    tests = db.relationship('Testme', backref='test_author', lazy=True)
+    created_tests = db.relationship('CustomTestme', backref='created_tests_author', lazy=True)
     profile = db.relationship('UserProfile', uselist=False, backref='user_profile')
     comments = db.relationship('Comment', backref='user_comment', lazy=True)
+    passed_testme_list = db.relationship('UserTestme', backref='passed_testme_list', lazy=True)
 
     def __repr__(self):
         return f'{self.username}'

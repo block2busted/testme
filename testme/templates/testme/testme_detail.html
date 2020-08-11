@@ -5,33 +5,48 @@
     <div class="">
         <div>
             <h6>
-                {{ testme.title }}
+                {{ testme.title }}, created by {{ testme.author }}
             </h6>
             Count of executions: {{ testme.execution_count }}
         </div>
-        <div class="pt-2">
-            <h5>
-                {{ testme.question }}
-            </h5>
+        <div class="">
+            {{ testme.description }}
         </div>
-        <div>
-            <p>1) {{ testme.answer_1 }}</p>
-            <p>2) {{ testme.answer_2 }}</p>
-            <p>3) {{ testme.answer_3 }}</p>
-            <p>4) {{ testme.answer_4 }}</p>
+        <div class="question-list pt-1">
+            {% for question in testme.questions %}
+                <div>
+                    {{ question.title }}
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        1. {{ question.answers.answer_1 }}
+                    </div>
+                    <div class="col-md-6">
+                        2. {{ question.answers.answer_2 }}
+                    </div>
+                    <div class="col-md-6">
+                        3. {{ question.answers.answer_3 }}
+                    </div>
+                    <div class="col-md-6">
+                        4. {{ question.answers.answer_4 }}
+                    </div>
+                </div>
+                <div>
+                    <h6>
+                        Right answer: {{ question.right_answer.content }}
+                    </h6>
+                    </p>
+                </div>
+            {% endfor %}
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-4">
-            <h6 class="ml-5">
-                Right answer: №{{ testme.right_answer }}
-            </h6>
-            {{ testme.about }}
-        </div>
-    </div>
-    <button class="btn-primare btn-md">
-        Start test!
-    </button>
+
+    <form method="get" action="{{ url_for('testme_start', testme_id=testme.id) }}">
+        <button type="submit" class="btn-primare btn-md">
+            Start test
+        </button>
+    </form>
+
     <div class="testme-comments pt-5">
         <h3>
             Comments:
