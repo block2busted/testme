@@ -1,9 +1,11 @@
+import random
+
 from flask import render_template, flash, redirect, url_for, request
-from flask_login import login_required, current_user
+from flask_login import current_user
 from sqlalchemy import desc
 from testme import app, db
 from .models import Comment, CustomTestme, UserTestme, TestmeQuestion, \
-    UserTestmeAnswer, TestmeRightAnswer
+    UserTestmeAnswer, TestmeRightAnswer, TestmeAnswer
 from .forms import TestForm, CommentForm
 from .services import get_testme_question, get_testme_answers, get_testme_right_answer, get_right_answer_content
 
@@ -148,3 +150,49 @@ def user_testme_perfomed():
         username=current_user.username
     ).all()
     return render_template('testme/testme_list.html', testme_list=testme_list)
+
+
+@app.route('/generate-testme')
+def generate_testme():
+    """Auto-generate testme"""
+    for i in range(2):
+        last_testme = CustomTestme.query.order_by(desc(CustomTestme.id)).first()
+        testme = CustomTestme(
+            title='Title of question №' + str(last_testme.id + 1),
+            description='Short description.',
+            count_questions=0,
+            author_id=1,
+            execution_count=0
+        )
+        db.session.add(testme)
+        db.session.commit()
+        for j in range(random.randint(1, 15)):
+            last_question = TestmeQuestion.query.order_by(desc(TestmeQuestion.id)).first()
+            testme_question = TestmeQuestion(
+                testme_id=testme.id,
+                title='Title for question №' + str(last_question.id + 1),
+            )
+            db.session.add(testme_question)
+            db.session.commit()
+            testme_answers = TestmeAnswer(
+                answer_1='First answer.',
+                answer_2='Second answer.',
+                answer_3='Third answer.',
+                answer_4='Fourth answer.',
+                testme_id=testme.id,
+                question_id=testme_question.id
+            )
+            db.session.add(testme_answers)
+            db.session.commit()
+            right_answer = TestmeRightAnswer(
+                content=random.randint(1, 4),
+                question_id=testme_question.id
+            )
+            db.session.add(right_answer)
+            db.session.commit()
+            testme_question.answers = testme_answers
+            testme_question.right_answer = right_answer
+            testme.questions.append(testme_question)
+            db.session.commit()
+
+    return redirect(url_for('testme_list'))
