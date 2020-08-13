@@ -10,6 +10,8 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = os.getenv('DJANGO_BLOG_SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sqlite.db'
+app.config['SQLALCHEMY_TRACE_MODIFICATIONS'] = True
+app.config['WHOOSH_base'] = 'whoosh'
 
 db = SQLAlchemy(app)
 
@@ -32,6 +34,7 @@ github_oauth = oauth.remote_app(
     access_token_url='https://github.com/login/oauth/access_token',
     authorize_url='https://github.com/login/oauth/authorize'
 )
+
 
 from testme.apps.testme import routes
 from testme.apps.account import routes

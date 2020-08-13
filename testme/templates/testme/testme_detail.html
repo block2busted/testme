@@ -13,7 +13,7 @@
             </div>
             <div class="col-md-4">
                 {% if user_testme %}
-                    Your results: {{ user_testme.result }}%
+                    Your results: {{ user_testme.result }}%({{ user_testme.right_answer_count }}/)
                 {% else %}
                     Try to start this testme!
                 {% endif %}

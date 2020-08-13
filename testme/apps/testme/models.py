@@ -5,6 +5,7 @@ from testme import db
 class CustomTestme(db.Model):
     """Testme model"""
     __tablename__ = 'custom_testme'
+    __searchable__ = ['title']
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(128), unique=True, nullable=True)
@@ -80,8 +81,9 @@ class UserTestme(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     username = db.Column(db.String(64), nullable=False)
     passed_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    testme_id = db.Column(db.Integer, db.ForeignKey('custom_testme.id'))
+    right_answer_count = db.Column(db.Integer, nullable=False)
     result = db.Column(db.Float, nullable=False)
+    testme_id = db.Column(db.Integer, db.ForeignKey('custom_testme.id'))
     answer_list = db.relationship('UserTestmeAnswer', backref='user_testme_answer_list', lazy=True)
 
     def __repr__(self):

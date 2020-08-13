@@ -102,10 +102,14 @@ def testme_start(testme_id):
     question_list = TestmeQuestion.query.filter_by(testme_id=testme.id)
 
     if request.method == 'POST':
+        passed_testme = UserTestme.query.filter_by(testme_id=testme.id, user_id=current_user.id, username=current_user.username).first()
+        if passed_testme:
+            db.session.delete(passed_testme)
         user_testme = UserTestme(
             testme_id=testme.id,
             user_id=current_user.id,
             username=current_user.username,
+            right_answer_count=0,
             result=0
         )
         db.session.add(user_testme)
@@ -115,7 +119,8 @@ def testme_start(testme_id):
             right_or_not = False
             if answer == str(right_answer):
                 right_or_not = True
-                user_testme.result += 1/testme.count_questions*100
+                user_testme.right_answer_count += 1
+                user_testme.result += (1/testme.count_questions)*100
             user_question = UserTestmeAnswer(
                 user_username=current_user.username,
                 user_testme_id=user_testme.id,
@@ -129,3 +134,17 @@ def testme_start(testme_id):
             db.session.commit()
         return redirect(url_for('testme_detail', testme_id=testme.id))
     return render_template('testme/testme_start.html', testme=testme, question_list=question_list)
+
+
+@app.route('/testme/search')
+def search():
+    testme_list = CustomTestme.query.filter(CustomTestme.title.contains(str(request.args.get('Q')))).all()
+    return render_template('testme/testme_list.html', testme_list=testme_list)
+
+
+@app.route('/testme/ended')
+def user_testme_perfomed():
+    testme_list = UserTestme.query.filter_by(
+        username=current_user.username
+    ).all()
+    return render_template('testme/testme_list.html', testme_list=testme_list)
