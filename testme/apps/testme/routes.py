@@ -2,8 +2,9 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_required, current_user
 from sqlalchemy import desc
 from testme import app, db
-from .models import Comment, CustomTestme, TestmeAnswer
-from .forms import TestForm, CommentForm, StartTestmeForm
+from .models import Comment, CustomTestme, UserTestme, TestmeQuestion, \
+    UserTestmeAnswer, TestmeRightAnswer
+from .forms import TestForm, CommentForm
 from .services import get_testme_question, get_testme_answers, get_testme_right_answer, get_right_answer_content
 
 
@@ -24,6 +25,7 @@ def testme_detail(testme_id):
     testme = CustomTestme.query.get_or_404(testme_id)
     comment_form = CommentForm()
     testme_comment_list = Comment.query.filter_by(testme_id=testme_id)
+    user_testme = UserTestme.query.filter_by(testme_id=testme.id, username=current_user.username).first()
     if comment_form.validate_on_submit():
         testme_comment = Comment(
             author=current_user.username,
@@ -39,7 +41,8 @@ def testme_detail(testme_id):
             'testme/testme_detail.html',
             testme=testme,
             comment_form=comment_form,
-            testme_comment_list=testme_comment_list
+            testme_comment_list=testme_comment_list,
+            user_testme=user_testme
         )
 
 
@@ -56,7 +59,8 @@ def testme_create():
         testme = CustomTestme(
             title=testme_form.title.data,
             description=testme_form.description.data,
-            author_id=current_user.id
+            author_id=current_user.id,
+            count_questions=0
         )
         db.session.add(testme)
         db.session.commit()
@@ -84,6 +88,7 @@ def testme_create():
             question.answers = testme_answers
             question.right_answer = testme_right_answer
             testme.questions.append(question)
+            testme.count_questions += 1
         db.session.commit()
         return redirect(url_for('testme_detail', testme_id=testme.id))
 
@@ -94,9 +99,33 @@ def testme_create():
 def testme_start(testme_id):
     """Start testme"""
     testme = CustomTestme.query.get_or_404(testme_id)
-    start_testme_form = StartTestmeForm()
-    answers = TestmeAnswer.query.filter_by()
-    #start_testme_form.answers.choices = [(answer.id, answer.answer) for question in testme.questions.answers]
-    return render_template('testme/testme_start.html', testme=testme)
+    question_list = TestmeQuestion.query.filter_by(testme_id=testme.id)
 
-# [(g.id, g.name) for g in Group.query.order_by('name')]
+    if request.method == 'POST':
+        user_testme = UserTestme(
+            testme_id=testme.id,
+            user_id=current_user.id,
+            username=current_user.username,
+            result=0
+        )
+        db.session.add(user_testme)
+        db.session.commit()
+        for question_id, answer in request.form.items():
+            right_answer = TestmeRightAnswer.query.filter_by(question_id=question_id).first().content
+            right_or_not = False
+            if answer == str(right_answer):
+                right_or_not = True
+                user_testme.result += 1/testme.count_questions*100
+            user_question = UserTestmeAnswer(
+                user_username=current_user.username,
+                user_testme_id=user_testme.id,
+                question_id=question_id,
+                content=answer,
+                right_or_not=right_or_not
+            )
+            db.session.add(user_question)
+            db.session.commit()
+            user_testme.answer_list.append(user_question)
+            db.session.commit()
+        return redirect(url_for('testme_detail', testme_id=testme.id))
+    return render_template('testme/testme_start.html', testme=testme, question_list=question_list)

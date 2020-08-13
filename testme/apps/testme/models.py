@@ -10,12 +10,12 @@ class CustomTestme(db.Model):
     title = db.Column(db.String(128), unique=True, nullable=True)
     description = db.Column(db.Text, nullable=False)
     date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    count_questions = db.Column(db.Integer, nullable=False)
     questions = db.relationship('TestmeQuestion', backref='testme_questions', lazy=True)
     answers = db.relationship('TestmeAnswer', backref='testme_answers', lazy=True)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     execution_count = db.Column(db.Integer, nullable=False, default=0)
     user_testme = db.relationship('UserTestme', backref='user_testme', lazy=True)
-
 
     def __repr__(self):
         return f'Test №{self.id}: {self.title}'
@@ -30,6 +30,7 @@ class TestmeQuestion(db.Model):
     title = db.Column(db.String(128), unique=False, nullable=False)
     answers = db.relationship('TestmeAnswer', uselist=False, backref='question_answers', lazy=True)
     right_answer = db.relationship('TestmeRightAnswer', uselist=False, backref='right_answer', lazy=True)
+    user_question = db.relationship('UserTestmeAnswer', backref='user_answers', lazy=True)
 
 
 class TestmeAnswer(db.Model):
@@ -80,8 +81,8 @@ class UserTestme(db.Model):
     username = db.Column(db.String(64), nullable=False)
     passed_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     testme_id = db.Column(db.Integer, db.ForeignKey('custom_testme.id'))
-    results = db.Column(db.Float, nullable=False)
-    answer = db.relationship('UserTestmeAnswer', backref='user_answers', lazy=True)
+    result = db.Column(db.Float, nullable=False)
+    answer_list = db.relationship('UserTestmeAnswer', backref='user_testme_answer_list', lazy=True)
 
     def __repr__(self):
         return f'Test passed by {self.username}'
@@ -90,7 +91,10 @@ class UserTestme(db.Model):
 class UserTestmeAnswer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(128), nullable=False)
+    user_username = db.Column(db.String(64), db.ForeignKey('user.username'))
     user_testme_id = db.Column(db.Integer, db.ForeignKey('user_testme.id'))
+    question_id = db.Column(db.Integer, db.ForeignKey('testme_question.id'))
+    right_or_not = db.Column(db.Boolean, nullable=False)
 
     def __repr__(self):
         return f'Answer on question №{self.id}: {self.content}'

@@ -3,12 +3,23 @@
 {% block content %}
 
     <div class="">
-        <div>
-            <h6>
-                {{ testme.title }}, created by {{ testme.author }}
-            </h6>
-            Count of executions: {{ testme.execution_count }}
+        <h6>
+            {{ testme.title }}, created by {{ testme.author }}
+        </h6>
+        <div class="row">
+            <div class="col-md-4">
+                <div>Count of executions: {{ testme.execution_count }}</div>
+                <div>Count of questions: {{ testme.count_questions }}</div>
+            </div>
+            <div class="col-md-4">
+                {% if user_testme %}
+                    Your results: {{ user_testme.result }}%
+                {% else %}
+                    Try to start this testme!
+                {% endif %}
+            </div>
         </div>
+
         <div class="">
             {{ testme.description }}
         </div>

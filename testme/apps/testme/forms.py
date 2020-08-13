@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField, SelectField, FieldList, FormField
+from wtforms import StringField, TextAreaField, SubmitField, SelectField, FieldList, FormField, RadioField
 from wtforms.validators import DataRequired
 
 
@@ -37,15 +37,17 @@ class CommentForm(FlaskForm):
 
 class StartTestmeQuestionForm(FlaskForm):
     question = StringField('Question', validators=[DataRequired()])
-    answer_1 = StringField('Answer 1', validators=[DataRequired()])
-    answer_2 = StringField('Answer 2', validators=[DataRequired()])
-    answer_3 = StringField('Answer 3', validators=[DataRequired()])
-    answer_4 = StringField('Answer 4', validators=[DataRequired()])
+    #answer_1 = StringField('Answer 1', validators=[DataRequired()])
+    #answer_2 = StringField('Answer 2', validators=[DataRequired()])
+    #answer_3 = StringField('Answer 3', validators=[DataRequired()])
+    #answer_4 = StringField('Answer 4', validators=[DataRequired()])
+    answers = RadioField('Answers', coerce=str)
 
     class Meta:
         csrf = None
 
 
 class StartTestmeForm(FlaskForm):
-    question = FieldList(FormField)
-    answers = SelectField('Answers')
+    question = FieldList(FormField(StartTestmeQuestionForm))
+    #question = StringField('Question', validators=[DataRequired()])
+    #answers = SelectField('Answers')

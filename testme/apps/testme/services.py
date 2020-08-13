@@ -24,6 +24,7 @@ def get_testme_answers(answer_1, answer_2, answer_3, answer_4, testme_id, questi
         question_id=question_id
     )
     db.session.add(testme_answers)
+    db.session.commit()
     return testme_answers
 
 
@@ -34,11 +35,8 @@ def get_testme_right_answer(right_answer, question_id):
         question_id=question_id
     )
     db.session.add(testme_right_answer)
+    db.session.commit()
     return testme_right_answer
-
-
-def get_testme_poll():
-    """Return """
 
 
 def get_right_answer_content(question_data_right_answer, question_data):

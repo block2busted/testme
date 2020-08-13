@@ -19,6 +19,7 @@ class User(db.Model, UserMixin):
     profile = db.relationship('UserProfile', uselist=False, backref='user_profile')
     comments = db.relationship('Comment', backref='user_comment', lazy=True)
     passed_testme_list = db.relationship('UserTestme', backref='passed_testme_list', lazy=True)
+    user_testme_answer = db.relationship('UserTestmeAnswer', backref='user_testme_answer')
 
     def __repr__(self):
         return f'{self.username}'
