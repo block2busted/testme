@@ -1,9 +1,12 @@
 from flask import render_template, flash, redirect, url_for, request, session, jsonify
-from testme import app, bcrypt, db, github_oauth
+from sqlalchemy.orm.exc import NoResultFound
+
+from testme import app, bcrypt, db
 from .models import User, UserProfile
 from .forms import SignupForm, LoginForm, ProfileUpdateForm
 from flask_login import login_user, logout_user, current_user, login_required
 from .services import save_photo
+from flask_dance.contrib.github import github
 
 
 @app.route('/')
@@ -38,10 +41,11 @@ def login():
     if request.method == 'POST':
         login_form = LoginForm()
         if login_form.validate_on_submit():
-            user = User.query.filter_by(email=login_form.email.data).first()
+            user = User.query.filter_by(username=login_form.username.data).first()
             if user and bcrypt.check_password_hash(user.password, login_form.password.data):
                 login_user(user, remember=login_form.remember.data)
                 next_page = request.args.get('next')
+                flash(f'{user.username}, you are welcome!', 'primary')
                 if next_page:
                     return redirect(next_page)
                 return redirect(url_for('index'))
@@ -76,11 +80,11 @@ def profile():
                 user_profile.photo = photo_file
             db.session.commit()
         return render_template(
-                'account/profile.html',
-                image_file=image_file,
-                profile_form=profile_form,
-                user_profile=user_profile
-            )
+            'account/profile.html',
+            image_file=image_file,
+            profile_form=profile_form,
+            user_profile=user_profile
+        )
     else:
         return render_template(
             'account/profile.html',
@@ -88,3 +92,40 @@ def profile():
             profile_form=profile_form,
             user_profile=user_profile
         )
+
+
+@app.route('/github-callback')
+def github_oauth_login():
+    if not github.authorized:
+        return redirect(url_for('github.login'))
+
+    account_info = github.get('/user')
+
+    if account_info.ok:
+        account_info_json = account_info.json()
+        print(account_info_json)
+        # return '<h1>Your Github name is {}'.format(account_info_json['login'])
+
+        user = User.query.filter_by(username=account_info_json['login'])
+
+        try:
+            user = user.one()
+            user.create_profile()
+            next_page = request.args.get('next')
+            login_user(user)
+            flash(f'{user.username}, you are welcome!', 'primary')
+            if next_page:
+                return redirect(next_page)
+            return redirect(url_for('index'))
+        except NoResultFound:
+            user = User(
+                username=account_info_json['login'],
+                email='',
+                password=''
+            )
+            flash(f'{user.username}, you are welcome!', 'primary')
+            db.session.add(user)
+            db.session.commit()
+
+    flash(f'Login failed....', 'danger')
+    return redirect(url_for('index'))

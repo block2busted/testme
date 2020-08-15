@@ -155,10 +155,14 @@ def user_testme_perfomed():
 @app.route('/generate-testme')
 def generate_testme():
     """Auto-generate testme"""
+    answer_list = ['First answer.', 'Second answer.', 'Third answer.', 'Fourth answer.']
     for i in range(2):
         last_testme = CustomTestme.query.order_by(desc(CustomTestme.id)).first()
+        same_testme_id = 1
+        if last_testme:
+            same_testme_id = last_testme.id + 1
         testme = CustomTestme(
-            title='Title of question №' + str(last_testme.id + 1),
+            title='Title of question №' + str(same_testme_id),
             description='Short description.',
             count_questions=0,
             author_id=1,
@@ -168,24 +172,27 @@ def generate_testme():
         db.session.commit()
         for j in range(random.randint(1, 15)):
             last_question = TestmeQuestion.query.order_by(desc(TestmeQuestion.id)).first()
+            same_quetion_id = 1
+            if last_testme:
+                same_quetion_id = last_question.id + 1
             testme_question = TestmeQuestion(
                 testme_id=testme.id,
-                title='Title for question №' + str(last_question.id + 1),
+                title='Title for question №' + str(same_quetion_id),
             )
             db.session.add(testme_question)
             db.session.commit()
             testme_answers = TestmeAnswer(
-                answer_1='First answer.',
-                answer_2='Second answer.',
-                answer_3='Third answer.',
-                answer_4='Fourth answer.',
+                answer_1=answer_list[0],
+                answer_2=answer_list[1],
+                answer_3=answer_list[2],
+                answer_4=answer_list[3],
                 testme_id=testme.id,
                 question_id=testme_question.id
             )
             db.session.add(testme_answers)
             db.session.commit()
             right_answer = TestmeRightAnswer(
-                content=random.randint(1, 4),
+                content=random.choice(answer_list),
                 question_id=testme_question.id
             )
             db.session.add(right_answer)
@@ -193,6 +200,7 @@ def generate_testme():
             testme_question.answers = testme_answers
             testme_question.right_answer = right_answer
             testme.questions.append(testme_question)
+            testme.count_questions += 1
             db.session.commit()
 
     return redirect(url_for('testme_list'))

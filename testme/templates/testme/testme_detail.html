@@ -13,7 +13,7 @@
             </div>
             <div class="col-md-4">
                 {% if user_testme %}
-                    Your results: {{ user_testme.result }}%({{ user_testme.right_answer_count }}/)
+                    Your results: {{ user_testme.result|round(2) }}%({{ user_testme.right_answer_count }}/{{ testme.count_questions }})
                 {% else %}
                     Try to start this testme!
                 {% endif %}

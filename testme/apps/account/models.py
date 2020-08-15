@@ -20,14 +20,16 @@ class User(db.Model, UserMixin):
     comments = db.relationship('Comment', backref='user_comment', lazy=True)
     passed_testme_list = db.relationship('UserTestme', backref='passed_testme_list', lazy=True)
     user_testme_answer = db.relationship('UserTestmeAnswer', backref='user_testme_answer')
+    social_account = db.relationship('UserSocialAccount', backref='user_social_account', lazy=True)
 
     def __repr__(self):
         return f'{self.username}'
 
     def create_profile(self, *args, **kwargs):
         profile = UserProfile(user_id=self.id, username=self.username)
-        db.session.add(profile)
-        db.session.commit()
+        if not profile:
+            db.session.add(profile)
+            db.session.commit()
 
 
 class UserProfile(db.Model):
@@ -43,3 +45,13 @@ class UserProfile(db.Model):
 
     def __repr__(self):
         return f'Profile {self.username}'
+
+
+class UserSocialAccount(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    OAuth_key = db.Column(db.String(128), unique=True)
+    service = db.Column(db.String(32), nullable=False)
+    username = db.Column(db.String, db.ForeignKey('user.username'), nullable=True)
+
+    def __repr__(self):
+        return f'Social account {self.service} by {self.username}'
